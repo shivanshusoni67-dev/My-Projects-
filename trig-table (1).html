@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trigonometric Ratios & Identities — Shivanshu Soni</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff;
+    --pink: #ff00c8;
+    --gold: #ffd700;
+    --green: #39ff14;
+    --bg: #030712;
+    --card: rgba(5, 15, 35, 0.85);
+    --border: rgba(0, 245, 255, 0.3);
+    --text: #e0f7ff;
+    --dim: #7ea8c0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Exo 2', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════════════════════════════
+     INTRO SCREEN
+  ═══════════════════════════════════ */
+  #intro {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #000a14;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  #intro.hide {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+
+  #introCanvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(0,245,255,0.12);
+    animation: ringRotate linear infinite;
+  }
+  .ring1 { width: 500px; height: 500px; border-color: rgba(0,245,255,0.08); animation-duration: 18s; }
+  .ring2 { width: 360px; height: 360px; border-color: rgba(255,0,200,0.08); animation-duration: 12s; animation-direction: reverse; }
+  .ring3 { width: 220px; height: 220px; border-color: rgba(255,215,0,0.1);  animation-duration: 8s; }
+
+  @keyframes ringRotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .intro-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .intro-pre {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 6px;
+    color: var(--cyan); text-transform: uppercase;
+    opacity: 0; animation: fadeUp 0.8s ease forwards 0.3s;
+    margin-bottom: 24px;
+  }
+
+  .intro-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(24px, 5vw, 58px);
+    font-weight: 900; line-height: 1.2;
+    background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 35%, #ffffff 55%, var(--pink) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    opacity: 0; animation: titleReveal 1.2s cubic-bezier(0.16,1,0.3,1) forwards 0.7s;
+    letter-spacing: 2px;
+  }
+
+  @keyframes titleReveal {
+    0%   { opacity:0; transform: translateY(30px) scale(0.96); }
+    100% { opacity:1; transform: translateY(0)   scale(1); }
+  }
+
+  .intro-amp {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(20px, 3.5vw, 42px);
+    color: rgba(255,255,255,0.35);
+    display: block; margin: 8px 0;
+    opacity: 0; animation: fadeUp 0.8s ease forwards 1.2s;
+  }
+
+  .intro-sub {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(16px, 2.8vw, 36px);
+    font-weight: 400;
+    background: linear-gradient(90deg, var(--gold), #fff8dc, var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(0 0 15px rgba(255,215,0,0.4));
+    opacity: 0; animation: fadeUp 1s ease forwards 1.5s;
+    letter-spacing: 3px;
+  }
+
+  .intro-divider {
+    width: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), transparent);
+    margin: 30px auto;
+    opacity: 0; animation: lineExpand 1s ease forwards 1.9s;
+    box-shadow: 0 0 10px rgba(0,245,255,0.4);
+  }
+  @keyframes lineExpand {
+    0%   { width:0; opacity:0; }
+    100% { width: min(500px,80vw); opacity:1; }
+  }
+
+  .intro-by {
+    opacity: 0; animation: fadeUp 0.8s ease forwards 2.3s;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .intro-by-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 5px; color: var(--dim); text-transform: uppercase;
+  }
+  .intro-by-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(14px, 2.2vw, 26px); font-weight: 700;
+    background: linear-gradient(135deg, var(--cyan), #fff, var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    letter-spacing: 4px;
+    animation: nameGlow 2.5s ease-in-out infinite alternate;
+  }
+  @keyframes nameGlow {
+    from { filter: drop-shadow(0 0 8px rgba(0,245,255,0.4)); }
+    to   { filter: drop-shadow(0 0 22px rgba(0,245,255,0.9)) drop-shadow(0 0 40px rgba(255,0,200,0.3)); }
+  }
+
+  .intro-btn {
+    margin-top: 42px;
+    opacity: 0; animation: fadeUp 0.8s ease forwards 2.8s;
+  }
+  .enter-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--cyan);
+    background: rgba(0,245,255,0.06);
+    border: 1px solid rgba(0,245,255,0.35);
+    padding: 11px 34px; border-radius: 2px;
+    cursor: pointer; text-transform: uppercase;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .enter-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0,245,255,0.12), transparent);
+    transform: translateX(-100%); transition: transform 0.4s;
+  }
+  .enter-btn:hover::before { transform: translateX(100%); }
+  .enter-btn:hover {
+    background: rgba(0,245,255,0.12);
+    box-shadow: 0 0 20px rgba(0,245,255,0.25);
+    border-color: var(--cyan);
+  }
+
+  .intro-progress {
+    position: absolute; bottom: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    box-shadow: 0 0 8px var(--cyan);
+    animation: progress 4s linear forwards 0.5s;
+    width: 0%;
+  }
+  @keyframes progress { from { width:0%; } to { width:100%; } }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ═══════════════════════════════════
+     MAIN PAGE
+  ═══════════════════════════════════ */
+  #mainPage {
+    opacity: 0; transition: opacity 0.8s ease 0.2s;
+    pointer-events: none;
+  }
+  #mainPage.visible { opacity:1; pointer-events:all; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(0,245,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 20%, rgba(255,0,200,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 35%, rgba(0,245,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 80%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 85%, rgba(255,0,200,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 60% 90%, rgba(255,215,0,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 10%, rgba(255,255,255,0.9) 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0,100,200,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(150,0,200,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(0,200,150,0.05) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes twinkle { 0%{opacity:.6} 100%{opacity:1} }
+
+  .container {
+    max-width: 1200px; margin: 0 auto;
+    padding: 50px 20px 60px;
+    position: relative; z-index: 1;
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity:0; transform:translateY(36px); transition: opacity .75s ease, transform .75s ease; }
+  .reveal.in { opacity:1; transform:translateY(0); }
+
+  /* Header */
+  .header { text-align:center; margin-bottom:55px; }
+  .header-badge {
+    display:inline-block; font-family:'Share Tech Mono',monospace;
+    font-size:11px; letter-spacing:4px; color:var(--cyan); text-transform:uppercase;
+    border:1px solid rgba(0,245,255,.4); padding:5px 16px; border-radius:2px; margin-bottom:18px;
+    box-shadow:0 0 10px rgba(0,245,255,.15),inset 0 0 10px rgba(0,245,255,.05);
+  }
+  h1 {
+    font-family:'Orbitron',sans-serif; font-size:clamp(28px,5vw,52px); font-weight:900; line-height:1.1;
+    background:linear-gradient(135deg,var(--cyan) 0%,#fff 40%,var(--pink) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(0,245,255,.4));
+  }
+  .subtitle { font-family:'Share Tech Mono',monospace; color:var(--dim); font-size:13px; letter-spacing:2px; }
+
+  /* Section titles */
+  .section-title {
+    font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700; letter-spacing:3px;
+    text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .section-title::before {
+    content:''; display:block; width:4px; height:20px;
+    background:var(--accent-color,var(--cyan)); box-shadow:0 0 8px var(--accent-color,var(--cyan)); border-radius:2px;
+  }
+  .section-title::after {
+    content:''; flex:1; height:1px;
+    background:linear-gradient(to right,var(--accent-color,var(--cyan)),transparent); opacity:.3;
+  }
+  .section { margin-bottom:48px; }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x:auto; border-radius:12px; border:1px solid var(--border);
+    box-shadow:0 0 30px rgba(0,245,255,.06),inset 0 1px 0 rgba(255,255,255,.05);
+    background:var(--card); backdrop-filter:blur(12px);
+  }
+  table { width:100%; border-collapse:collapse; font-family:'Share Tech Mono',monospace; font-size:13.5px; }
+  thead tr { background:linear-gradient(90deg,rgba(0,245,255,.12),rgba(255,0,200,.08),rgba(0,245,255,.05)); border-bottom:1px solid rgba(0,245,255,.25); }
+  th { padding:14px 18px; text-align:center; font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; white-space:nowrap; }
+  td { padding:13px 18px; text-align:center; border-bottom:1px solid rgba(0,245,255,.07); transition:background .2s; color:#cce8f0; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tbody tr:hover td { background:rgba(0,245,255,.06); color:#fff; }
+  td:first-child { font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; color:var(--gold); text-shadow:0 0 8px rgba(255,215,0,.4); letter-spacing:1px; white-space:nowrap; }
+  .undef { color:#ff4444; font-style:italic; font-family:'Exo 2',sans-serif; font-size:11px; }
+  .highlight-val { color:var(--green); text-shadow:0 0 6px rgba(57,255,20,.4); }
+
+  /* Identity cards */
+  .identity-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .id-card {
+    background:var(--card); border:1px solid var(--card-border,rgba(0,245,255,.2)); border-radius:10px;
+    padding:20px; backdrop-filter:blur(10px); transition:transform .25s,box-shadow .25s;
+    position:relative; overflow:hidden;
+  }
+  .id-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(90deg,transparent,var(--card-accent,var(--cyan)),transparent); opacity:.7; }
+  .id-card:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,245,255,.12); }
+  .id-card-label { font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:2.5px; color:var(--card-accent,var(--cyan)); text-transform:uppercase; margin-bottom:10px; opacity:.8; }
+  .id-formula { font-family:'Share Tech Mono',monospace; font-size:15px; color:#f0faff; line-height:1.7; }
+  .id-formula span.sym { color:var(--pink); }
+  .id-formula span.fn  { color:var(--cyan); }
+  .id-formula span.eq  { color:var(--gold); margin:0 5px; }
+  .id-formula span.num { color:var(--green); }
+
+  /* Ratio cards */
+  .ratio-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+  .ratio-card { background:var(--card); border:1px solid rgba(255,215,0,.2); border-radius:10px; padding:18px 20px; backdrop-filter:blur(10px); position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; }
+  .ratio-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); opacity:.6; }
+  .ratio-card:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(255,215,0,.1); }
+  .ratio-name { font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:10px; text-shadow:0 0 10px rgba(255,215,0,.4); }
+  .ratio-def  { font-family:'Share Tech Mono',monospace; font-size:13px; color:#c8e8f8; line-height:1.8; }
+
+  /* Legend */
+  .legend { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:40px; padding:20px; background:rgba(0,245,255,.03); border:1px solid rgba(0,245,255,.1); border-radius:10px; }
+  .legend-item { display:flex; align-items:center; gap:8px; font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--dim); }
+  .legend-dot  { width:8px; height:8px; border-radius:50%; }
+
+  /* Footer */
+  .footer { margin-top:60px; padding:32px 20px; border-top:1px solid rgba(0,245,255,.12); text-align:center; position:relative; overflow:hidden; }
+  .footer-glow-line { position:absolute; top:0; left:50%; transform:translateX(-50%); width:200px; height:1px; background:linear-gradient(90deg,transparent,var(--cyan),transparent); box-shadow:0 0 12px var(--cyan); }
+  .footer-made { display:inline-flex; align-items:center; gap:10px; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; }
+  .footer-name { font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:4px; background:linear-gradient(135deg,var(--cyan),#fff,var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:footerGlow 3s ease-in-out infinite alternate; }
+  @keyframes footerGlow { from{filter:drop-shadow(0 0 6px rgba(0,245,255,.4))} to{filter:drop-shadow(0 0 16px rgba(0,245,255,.9)) drop-shadow(0 0 30px rgba(255,0,200,.3))} }
+  .footer-ig { margin-top:12px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .footer-ig-handle { font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:2px; background:linear-gradient(90deg,#f9ce34,#ee2a7b,#6228d7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 6px rgba(238,42,123,.5)); }
+
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:rgba(0,0,0,.3); }
+  ::-webkit-scrollbar-thumb { background:rgba(0,245,255,.3); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ INTRO ═══════ -->
+<div id="intro">
+  <canvas id="introCanvas"></canvas>
+  <div class="ring ring1"></div>
+  <div class="ring ring2"></div>
+  <div class="ring ring3"></div>
+
+  <div class="intro-content">
+    <div class="intro-pre">◈ Mathematics Reference ◈</div>
+    <div class="intro-title">Trigonometric<br>Ratios</div>
+    <span class="intro-amp">&amp;</span>
+    <div class="intro-sub">Identities Table</div>
+    <div class="intro-divider"></div>
+    <div class="intro-by">
+      <span class="intro-by-label">Crafted by</span>
+      <span class="intro-by-name">Shivanshu Soni</span>
+    </div>
+    <div class="intro-btn">
+      <button class="enter-btn" onclick="enterMain()">▶ &nbsp;Enter Table</button>
+    </div>
+  </div>
+
+  <div class="intro-progress"></div>
+</div>
+
+<!-- ═══════ MAIN ═══════ -->
+<div id="mainPage">
+<div class="container">
+
+  <div class="header reveal">
+    <div class="header-badge">◈ Mathematics Reference ◈</div>
+    <h1>Trigonometric<br>Ratios & Identities</h1>
+    <p class="subtitle">// Complete Reference Guide — Right Triangle & Unit Circle</p>
+  </div>
+
+  <!-- S1: Basic Ratios -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#ffd700;">Basic Trigonometric Ratios</div>
+    <div class="ratio-grid">
+      <div class="ratio-card"><div class="ratio-name">sin θ</div><div class="ratio-def">= <span style="color:var(--cyan)">Opposite</span> / <span style="color:var(--pink)">Hypotenuse</span><br>= y / r &nbsp;|&nbsp; Unit circle: <span style="color:var(--green)">y</span></div></div>
+      <div class="ratio-card"><div class="ratio-name">cos θ</div><div class="ratio-def">= <span style="color:var(--cyan)">Adjacent</span> / <span style="color:var(--pink)">Hypotenuse</span><br>= x / r &nbsp;|&nbsp; Unit circle: <span style="color:var(--green)">x</span></div></div>
+      <div class="ratio-card"><div class="ratio-name">tan θ</div><div class="ratio-def">= <span style="color:var(--cyan)">Opposite</span> / <span style="color:var(--pink)">Adjacent</span><br>= sin θ / cos θ &nbsp;|&nbsp; = y / x</div></div>
+      <div class="ratio-card"><div class="ratio-name">cosec θ (csc)</div><div class="ratio-def">= <span style="color:var(--pink)">Hypotenuse</span> / <span style="color:var(--cyan)">Opposite</span><br>= 1 / sin θ &nbsp;|&nbsp; = r / y</div></div>
+      <div class="ratio-card"><div class="ratio-name">sec θ</div><div class="ratio-def">= <span style="color:var(--pink)">Hypotenuse</span> / <span style="color:var(--cyan)">Adjacent</span><br>= 1 / cos θ &nbsp;|&nbsp; = r / x</div></div>
+      <div class="ratio-card"><div class="ratio-name">cot θ</div><div class="ratio-def">= <span style="color:var(--cyan)">Adjacent</span> / <span style="color:var(--pink)">Opposite</span><br>= cos θ / sin θ &nbsp;|&nbsp; = x / y</div></div>
+    </div>
+  </div>
+
+  <!-- S2: Standard Angles -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#00f5ff;">Values at Standard Angles</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ratio</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>90°</th><th>120°</th><th>150°</th><th>180°</th><th>270°</th><th>360°</th></tr></thead>
+        <tbody>
+          <tr><td>sin θ</td><td>0</td><td>1/2</td><td>1/√2</td><td>√3/2</td><td class="highlight-val">1</td><td>√3/2</td><td>1/2</td><td>0</td><td>−1</td><td>0</td></tr>
+          <tr><td>cos θ</td><td class="highlight-val">1</td><td>√3/2</td><td>1/√2</td><td>1/2</td><td>0</td><td>−1/2</td><td>−√3/2</td><td>−1</td><td>0</td><td class="highlight-val">1</td></tr>
+          <tr><td>tan θ</td><td>0</td><td>1/√3</td><td>1</td><td>√3</td><td><span class="undef">undef</span></td><td>−√3</td><td>−1/√3</td><td>0</td><td><span class="undef">undef</span></td><td>0</td></tr>
+          <tr><td>cosec θ</td><td><span class="undef">undef</span></td><td>2</td><td>√2</td><td>2/√3</td><td class="highlight-val">1</td><td>2/√3</td><td>2</td><td><span class="undef">undef</span></td><td>−1</td><td><span class="undef">undef</span></td></tr>
+          <tr><td>sec θ</td><td class="highlight-val">1</td><td>2/√3</td><td>√2</td><td>2</td><td><span class="undef">undef</span></td><td>−2</td><td>−2/√3</td><td>−1</td><td><span class="undef">undef</span></td><td class="highlight-val">1</td></tr>
+          <tr><td>cot θ</td><td><span class="undef">undef</span></td><td>√3</td><td>1</td><td>1/√3</td><td>0</td><td>−1/√3</td><td>−√3</td><td><span class="undef">undef</span></td><td>0</td><td><span class="undef">undef</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- S3: Pythagorean -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#ff00c8;">Pythagorean Identities</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Primary</div><div class="id-formula"><span class="fn">sin²</span>θ <span class="sym">+</span> <span class="fn">cos²</span>θ <span class="eq">=</span> <span class="num">1</span></div></div>
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Derived — Tangent</div><div class="id-formula"><span class="num">1</span> <span class="sym">+</span> <span class="fn">tan²</span>θ <span class="eq">=</span> <span class="fn">sec²</span>θ</div></div>
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Derived — Cotangent</div><div class="id-formula"><span class="num">1</span> <span class="sym">+</span> <span class="fn">cot²</span>θ <span class="eq">=</span> <span class="fn">cosec²</span>θ</div></div>
+    </div>
+  </div>
+
+  <!-- S4: Reciprocal -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#39ff14;">Reciprocal & Quotient Identities</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Reciprocal</div><div class="id-formula"><span class="fn">sin</span>θ <span class="eq">=</span> <span class="num">1</span> / <span class="fn">cosec</span>θ<br><span class="fn">cos</span>θ <span class="eq">=</span> <span class="num">1</span> / <span class="fn">sec</span>θ<br><span class="fn">tan</span>θ <span class="eq">=</span> <span class="num">1</span> / <span class="fn">cot</span>θ</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Quotient</div><div class="id-formula"><span class="fn">tan</span>θ <span class="eq">=</span> <span class="fn">sin</span>θ / <span class="fn">cos</span>θ<br><span class="fn">cot</span>θ <span class="eq">=</span> <span class="fn">cos</span>θ / <span class="fn">sin</span>θ</div></div>
+    </div>
+  </div>
+
+  <!-- S5: Even/Odd -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#ffd700;">Even & Odd (Negative Angle) Identities</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(255,215,0,.2);--card-accent:#ffd700;"><div class="id-card-label">Even Functions</div><div class="id-formula"><span class="fn">cos</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">cos</span>θ<br><span class="fn">sec</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">sec</span>θ</div></div>
+      <div class="id-card" style="--card-border:rgba(255,215,0,.2);--card-accent:#ffd700;"><div class="id-card-label">Odd Functions</div><div class="id-formula"><span class="fn">sin</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="sym">−</span><span class="fn">sin</span>θ<br><span class="fn">tan</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="sym">−</span><span class="fn">tan</span>θ<br><span class="fn">cot</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="sym">−</span><span class="fn">cot</span>θ<br><span class="fn">cosec</span>(<span class="sym">−</span>θ) <span class="eq">=</span> <span class="sym">−</span><span class="fn">cosec</span>θ</div></div>
+    </div>
+  </div>
+
+  <!-- S6: Co-function -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#00f5ff;">Co-function Identities (Complementary)</div>
+    <div class="identity-grid">
+      <div class="id-card"><div class="id-card-label">90° − θ</div><div class="id-formula"><span class="fn">sin</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">cos</span>θ<br><span class="fn">cos</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">sin</span>θ<br><span class="fn">tan</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">cot</span>θ</div></div>
+      <div class="id-card"><div class="id-card-label">90° − θ (cont.)</div><div class="id-formula"><span class="fn">cosec</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">sec</span>θ<br><span class="fn">sec</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">cosec</span>θ<br><span class="fn">cot</span>(90°<span class="sym">−</span>θ) <span class="eq">=</span> <span class="fn">tan</span>θ</div></div>
+    </div>
+  </div>
+
+  <!-- S7: Sum & Difference -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#ff00c8;">Sum & Difference Formulas</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Sine</div><div class="id-formula"><span class="fn">sin</span>(A<span class="sym">+</span>B) <span class="eq">=</span> <span class="fn">sin</span>A <span class="fn">cos</span>B <span class="sym">+</span> <span class="fn">cos</span>A <span class="fn">sin</span>B<br><span class="fn">sin</span>(A<span class="sym">−</span>B) <span class="eq">=</span> <span class="fn">sin</span>A <span class="fn">cos</span>B <span class="sym">−</span> <span class="fn">cos</span>A <span class="fn">sin</span>B</div></div>
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Cosine</div><div class="id-formula"><span class="fn">cos</span>(A<span class="sym">+</span>B) <span class="eq">=</span> <span class="fn">cos</span>A <span class="fn">cos</span>B <span class="sym">−</span> <span class="fn">sin</span>A <span class="fn">sin</span>B<br><span class="fn">cos</span>(A<span class="sym">−</span>B) <span class="eq">=</span> <span class="fn">cos</span>A <span class="fn">cos</span>B <span class="sym">+</span> <span class="fn">sin</span>A <span class="fn">sin</span>B</div></div>
+      <div class="id-card" style="--card-border:rgba(255,0,200,.25);--card-accent:#ff00c8;"><div class="id-card-label">Tangent</div><div class="id-formula"><span class="fn">tan</span>(A<span class="sym">+</span>B) <span class="eq">=</span> (tanA <span class="sym">+</span> tanB) / (<span class="num">1</span> <span class="sym">−</span> tanA·tanB)<br><span class="fn">tan</span>(A<span class="sym">−</span>B) <span class="eq">=</span> (tanA <span class="sym">−</span> tanB) / (<span class="num">1</span> <span class="sym">+</span> tanA·tanB)</div></div>
+    </div>
+  </div>
+
+  <!-- S8: Double & Half -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#39ff14;">Double & Half Angle Formulas</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Double — sin</div><div class="id-formula"><span class="fn">sin</span>(<span class="num">2</span>θ) <span class="eq">=</span> <span class="num">2</span> <span class="fn">sin</span>θ <span class="fn">cos</span>θ</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Double — cos</div><div class="id-formula"><span class="fn">cos</span>(<span class="num">2</span>θ) <span class="eq">=</span> <span class="fn">cos²</span>θ <span class="sym">−</span> <span class="fn">sin²</span>θ<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="eq">=</span> <span class="num">2</span><span class="fn">cos²</span>θ <span class="sym">−</span> <span class="num">1</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="eq">=</span> <span class="num">1</span> <span class="sym">−</span> <span class="num">2</span><span class="fn">sin²</span>θ</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Double — tan</div><div class="id-formula"><span class="fn">tan</span>(<span class="num">2</span>θ) <span class="eq">=</span> <span class="num">2</span>tanθ / (<span class="num">1</span> <span class="sym">−</span> tan²θ)</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Half — sin</div><div class="id-formula"><span class="fn">sin</span>(θ/<span class="num">2</span>) <span class="eq">=</span> ±√[(<span class="num">1</span> <span class="sym">−</span> cosθ) / <span class="num">2</span>]</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Half — cos</div><div class="id-formula"><span class="fn">cos</span>(θ/<span class="num">2</span>) <span class="eq">=</span> ±√[(<span class="num">1</span> <span class="sym">+</span> cosθ) / <span class="num">2</span>]</div></div>
+      <div class="id-card" style="--card-border:rgba(57,255,20,.2);--card-accent:#39ff14;"><div class="id-card-label">Half — tan</div><div class="id-formula"><span class="fn">tan</span>(θ/<span class="num">2</span>) <span class="eq">=</span> sinθ / (<span class="num">1</span> <span class="sym">+</span> cosθ)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="eq">=</span> (<span class="num">1</span> <span class="sym">−</span> cosθ) / sinθ</div></div>
+    </div>
+  </div>
+
+  <!-- S9: Product/Sum -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#ffd700;">Product-to-Sum & Sum-to-Product</div>
+    <div class="identity-grid">
+      <div class="id-card" style="--card-border:rgba(255,215,0,.2);--card-accent:#ffd700;"><div class="id-card-label">Product → Sum</div><div class="id-formula"><span class="fn">sinA sinB</span> <span class="eq">=</span> ½[cos(A<span class="sym">−</span>B) <span class="sym">−</span> cos(A<span class="sym">+</span>B)]<br><span class="fn">cosA cosB</span> <span class="eq">=</span> ½[cos(A<span class="sym">−</span>B) <span class="sym">+</span> cos(A<span class="sym">+</span>B)]<br><span class="fn">sinA cosB</span> <span class="eq">=</span> ½[sin(A<span class="sym">+</span>B) <span class="sym">+</span> sin(A<span class="sym">−</span>B)]</div></div>
+      <div class="id-card" style="--card-border:rgba(255,215,0,.2);--card-accent:#ffd700;"><div class="id-card-label">Sum → Product</div><div class="id-formula"><span class="fn">sinC <span class="sym">+</span> sinD</span> <span class="eq">=</span> 2 sin(<sup>C+D</sup>/<sub>2</sub>) cos(<sup>C−D</sup>/<sub>2</sub>)<br><span class="fn">sinC <span class="sym">−</span> sinD</span> <span class="eq">=</span> 2 cos(<sup>C+D</sup>/<sub>2</sub>) sin(<sup>C−D</sup>/<sub>2</sub>)<br><span class="fn">cosC <span class="sym">+</span> cosD</span> <span class="eq">=</span> 2 cos(<sup>C+D</sup>/<sub>2</sub>) cos(<sup>C−D</sup>/<sub>2</sub>)<br><span class="fn">cosC <span class="sym">−</span> cosD</span> <span class="eq">=</span> −2 sin(<sup>C+D</sup>/<sub>2</sub>) sin(<sup>C−D</sup>/<sub>2</sub>)</div></div>
+    </div>
+  </div>
+
+  <!-- S10: Quadrant -->
+  <div class="section reveal">
+    <div class="section-title" style="--accent-color:#00f5ff;">Signs by Quadrant (ASTC Rule)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Quadrant</th><th>Angle Range</th><th>sin</th><th>cos</th><th>tan</th><th>cosec</th><th>sec</th><th>cot</th><th>Positive</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--cyan)">I</td><td>0° – 90°</td><td class="highlight-val">+</td><td class="highlight-val">+</td><td class="highlight-val">+</td><td class="highlight-val">+</td><td class="highlight-val">+</td><td class="highlight-val">+</td><td style="color:var(--green)">ALL</td></tr>
+          <tr><td style="color:var(--pink)">II</td><td>90° – 180°</td><td class="highlight-val">+</td><td style="color:#ff4444">−</td><td style="color:#ff4444">−</td><td class="highlight-val">+</td><td style="color:#ff4444">−</td><td style="color:#ff4444">−</td><td style="color:var(--green)">sin, cosec</td></tr>
+          <tr><td style="color:var(--gold)">III</td><td>180° – 270°</td><td style="color:#ff4444">−</td><td style="color:#ff4444">−</td><td class="highlight-val">+</td><td style="color:#ff4444">−</td><td style="color:#ff4444">−</td><td class="highlight-val">+</td><td style="color:var(--green)">tan, cot</td></tr>
+          <tr><td style="color:#aaaaff">IV</td><td>270° – 360°</td><td style="color:#ff4444">−</td><td class="highlight-val">+</td><td style="color:#ff4444">−</td><td style="color:#ff4444">−</td><td class="highlight-val">+</td><td style="color:#ff4444">−</td><td style="color:var(--green)">cos, sec</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend reveal">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div>sin / cos functions</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink);box-shadow:0 0 6px var(--pink)"></div>Identities & Formulas</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div>Ratio Definitions</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></div>Positive Values</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff4444;box-shadow:0 0 6px #ff4444"></div>Negative Values</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#888"></div>Undefined</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer reveal">
+    <div class="footer-glow-line"></div>
+    <div class="footer-made">
+      <span style="color:rgba(0,245,255,.3);">◈</span>
+      MADE BY
+      <span class="footer-name">SHIVANSHU SONI</span>
+      <span style="color:rgba(0,245,255,.3);">◈</span>
+    </div>
+    <div class="footer-ig">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <defs>
+          <radialGradient id="ig1" cx="30%" cy="107%" r="150%">
+            <stop offset="0%"  stop-color="#fdf497"/>
+            <stop offset="10%" stop-color="#fdf497"/>
+            <stop offset="30%" stop-color="#fd5949"/>
+            <stop offset="60%" stop-color="#d6249f"/>
+            <stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient>
+        </defs>
+        <rect x="2" y="2" width="20" height="20" rx="5.5" ry="5.5" fill="url(#ig1)"/>
+        <circle cx="12" cy="12" r="4.5" fill="none" stroke="white" stroke-width="1.8"/>
+        <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+      </svg>
+      <span class="footer-ig-handle">@ig_shivanshu</span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+  /* Particle canvas */
+  const canvas = document.getElementById('introCanvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, pts = [];
+
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  class Pt {
+    constructor() { this.reset(); }
+    reset() {
+      this.x  = Math.random()*W; this.y = Math.random()*H;
+      this.vx = (Math.random()-.5)*.5; this.vy = (Math.random()-.5)*.5;
+      this.r  = Math.random()*1.5+.5; this.a = Math.random()*.8+.2;
+      const c = Math.random();
+      this.col = c<.5 ? '0,245,255' : c<.8 ? '255,0,200' : '255,215,0';
+    }
+    tick() {
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${this.col},${this.a})`; ctx.fill();
+      this.x+=this.vx; this.y+=this.vy;
+      if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+    }
+  }
+
+  for(let i=0;i<120;i++) pts.push(new Pt());
+
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>p.tick());
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.hypot(dx,dy);
+      if(d<90){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle=`rgba(0,245,255,${.07*(1-d/90)})`; ctx.lineWidth=.4; ctx.stroke(); }
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  /* Auto-enter */
+  let entered=false;
+  setTimeout(()=>{ if(!entered) enterMain(); }, 4500);
+
+  function enterMain(){
+    if(entered) return; entered=true;
+    document.getElementById('intro').classList.add('hide');
+    const mp=document.getElementById('mainPage');
+    mp.classList.add('visible');
+    setTimeout(()=>{ document.getElementById('intro').style.display='none'; },900);
+    setTimeout(initReveal,300);
+  }
+
+  /* Scroll reveal */
+  function initReveal(){
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:.08});
+    document.querySelectorAll('.reveal').forEach((el,i)=>{
+      el.style.transitionDelay=(i*.06)+'s'; io.observe(el);
+    });
+  }
+
+  /* Table row stagger */
+  const rowCSS=document.createElement('style');
+  rowCSS.textContent=`
+    @keyframes rowIn { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
+    tbody tr { opacity:0; }
+    tbody tr.rIn { opacity:1; animation: rowIn .45s ease both; }
+  `;
+  document.head.appendChild(rowCSS);
+
+  window.addEventListener('scroll',()=>{
+    document.querySelectorAll('tbody tr:not(.rIn)').forEach((row,i)=>{
+      if(row.getBoundingClientRect().top < innerHeight-10){
+        row.style.animationDelay=(i*.05)+'s';
+        row.classList.add('rIn');
+      }
+    });
+  });
+</script>
+</body>
+</html>
