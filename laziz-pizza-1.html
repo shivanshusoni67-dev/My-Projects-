@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laziz Pizza – Maihar</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8191e;
+    --yellow: #ffc933;
+    --orange: #ff6b35;
+    --dark: #1a0a02;
+    --darker: #0d0500;
+    --cream: #fff8ee;
+    --gold: #f5a623;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--darker);
+    color: var(--cream);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ===== CURSOR ===== */
+  body { cursor: none; }
+  #cursor {
+    width: 18px; height: 18px;
+    background: var(--yellow);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s, width .2s, height .2s, background .2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.big { width: 48px; height: 48px; background: var(--orange); }
+
+  /* ===== NOISE OVERLAY ===== */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:1000; opacity:.4;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 900;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 40px;
+    background: rgba(13,5,0,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid rgba(255,201,51,.15);
+  }
+  .nav-logo {
+    font-family: 'Boogaloo', cursive;
+    font-size: 2rem;
+    color: var(--yellow);
+    letter-spacing: 1px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    color: var(--cream); text-decoration: none;
+    font-family: 'Baloo 2', cursive; font-weight: 600; font-size: .95rem;
+    position: relative; padding-bottom: 2px;
+    transition: color .2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--yellow);
+    transition: width .3s;
+  }
+  .nav-links a:hover { color: var(--yellow); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #3b0900 0%, var(--darker) 70%);
+  }
+
+  /* floating emojis */
+  .floaters { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .floater {
+    position: absolute;
+    font-size: 2.5rem;
+    animation: float linear infinite;
+    opacity: .18;
+  }
+  @keyframes float {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: .05; }
+    10%  { opacity: .18; }
+    90%  { opacity: .18; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: .05; }
+  }
+
+  .hero-inner {
+    text-align: center; position: relative; z-index: 2;
+    animation: heroIn .9s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--red);
+    color: #fff; font-family: 'Baloo 2', cursive; font-weight: 800;
+    font-size: .8rem; letter-spacing: 3px; text-transform: uppercase;
+    padding: 5px 18px; border-radius: 30px; margin-bottom: 18px;
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(232,25,30,.5)} 50%{box-shadow:0 0 0 12px rgba(232,25,30,0)} }
+
+  .hero-title {
+    font-family: 'Boogaloo', cursive;
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: .95;
+    color: var(--yellow);
+    text-shadow: 0 0 60px rgba(255,201,51,.4), 6px 6px 0 var(--red);
+    animation: heroIn .9s .15s cubic-bezier(.16,1,.3,1) both;
+  }
+  .hero-title .accent { color: var(--cream); text-shadow: 4px 4px 0 var(--orange); }
+
+  .hero-sub {
+    font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 600;
+    color: rgba(255,248,238,.7); margin: 14px 0 32px;
+    letter-spacing: 2px; text-transform: uppercase;
+    animation: heroIn .9s .3s cubic-bezier(.16,1,.3,1) both;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: heroIn .9s .45s cubic-bezier(.16,1,.3,1) both;
+  }
+  .btn {
+    display: inline-block; text-decoration: none;
+    font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1rem;
+    padding: 14px 32px; border-radius: 50px;
+    transition: transform .2s, box-shadow .2s;
+    cursor: none;
+  }
+  .btn-primary {
+    background: var(--red); color: #fff;
+    box-shadow: 0 4px 20px rgba(232,25,30,.5);
+  }
+  .btn-primary:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 32px rgba(232,25,30,.65); }
+  .btn-outline {
+    border: 2px solid var(--yellow); color: var(--yellow);
+  }
+  .btn-outline:hover { background: var(--yellow); color: var(--dark); transform: translateY(-3px); }
+
+  /* pizza spin decoration */
+  .pizza-deco {
+    position: absolute; right: -80px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 22rem; opacity: .07;
+    animation: spin 40s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes spin { from{transform:translateY(-50%) rotate(0)} to{transform:translateY(-50%) rotate(360deg)} }
+
+  /* ===== SECTION COMMON ===== */
+  section { padding: 90px 40px; position: relative; }
+  .section-label {
+    font-family: 'Baloo 2', cursive; font-weight: 800;
+    font-size: .75rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--yellow); margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Boogaloo', cursive;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    color: var(--cream);
+    line-height: 1.05;
+    margin-bottom: 48px;
+  }
+  .section-title span { color: var(--red); }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* ===== DIVIDER ===== */
+  .wavy-divider {
+    width: 100%; overflow: hidden;
+    line-height: 0;
+  }
+  .wavy-divider svg { display: block; }
+
+  /* ===== MENU TABS ===== */
+  #menu { background: var(--dark); }
+
+  .tabs {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .tab-btn {
+    font-family: 'Baloo 2', cursive; font-weight: 700; font-size: .9rem;
+    padding: 10px 22px; border-radius: 30px; border: 2px solid rgba(255,201,51,.25);
+    background: transparent; color: var(--cream);
+    cursor: none; transition: all .25s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--red); border-color: var(--red); color: #fff;
+    box-shadow: 0 4px 18px rgba(232,25,30,.4);
+  }
+
+  .tab-panel { display: none; animation: fadeUp .4s ease both; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Pizza grid */
+  .pizza-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+  }
+  .pizza-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,201,51,.12);
+    border-radius: 16px; padding: 22px 20px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    position: relative; overflow: hidden;
+  }
+  .pizza-card::before {
+    content: '🍕';
+    position: absolute; right: -10px; top: -10px;
+    font-size: 5rem; opacity: .05;
+    transition: opacity .3s, transform .3s;
+  }
+  .pizza-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(232,25,30,.2); border-color: rgba(255,201,51,.4); }
+  .pizza-card:hover::before { opacity: .12; transform: rotate(20deg) scale(1.1); }
+
+  .pizza-name {
+    font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1.05rem;
+    color: var(--yellow); margin-bottom: 4px;
+  }
+  .pizza-desc {
+    font-size: .8rem; color: rgba(255,248,238,.5);
+    margin-bottom: 14px; line-height: 1.4;
+  }
+  .pizza-prices {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .price-tag {
+    font-family: 'Baloo 2', cursive; font-weight: 700; font-size: .82rem;
+    background: rgba(232,25,30,.18); border: 1px solid rgba(232,25,30,.35);
+    color: var(--cream); padding: 3px 10px; border-radius: 20px;
+  }
+  .price-tag span { color: var(--yellow); }
+  .must-try-badge {
+    display: inline-block; background: var(--red); color: #fff;
+    font-size: .65rem; font-weight: 800; letter-spacing: 1px;
+    padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .cheese-burst-note {
+    font-size: .75rem; color: var(--orange);
+    margin-top: 10px; font-weight: 600;
+  }
+
+  /* Starters / Burgers layout */
+  .items-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+  }
+  .item-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,201,51,.1);
+    border-radius: 12px; padding: 14px 18px;
+    transition: background .2s, border-color .2s;
+  }
+  .item-row:hover { background: rgba(255,201,51,.07); border-color: rgba(255,201,51,.3); }
+  .item-name { font-weight: 700; font-size: .9rem; color: var(--cream); }
+  .item-price { font-family: 'Baloo 2', cursive; font-weight: 800; color: var(--yellow); font-size: 1rem; white-space: nowrap; margin-left: 12px; }
+
+  /* Combos */
+  .combo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .combo-card {
+    background: linear-gradient(135deg, rgba(232,25,30,.15), rgba(255,107,53,.08));
+    border: 1px solid rgba(232,25,30,.3);
+    border-radius: 16px; padding: 22px 20px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .combo-card:hover { transform: translateY(-4px); box-shadow: 0 10px 36px rgba(232,25,30,.3); }
+  .combo-type {
+    font-family: 'Boogaloo', cursive; font-size: 1.4rem; color: var(--yellow);
+    margin-bottom: 14px; border-bottom: 1px solid rgba(255,201,51,.2); padding-bottom: 8px;
+  }
+  .combo-item {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+    gap: 10px;
+  }
+  .combo-item:last-child { border-bottom: none; }
+  .combo-desc { font-size: .85rem; color: rgba(255,248,238,.75); line-height: 1.3; flex: 1; }
+  .combo-price { font-family: 'Baloo 2', cursive; font-weight: 800; color: var(--orange); font-size: 1rem; white-space: nowrap; }
+
+  /* Drinks/Desserts */
+  .drinks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .drink-card {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,201,51,.12);
+    border-radius: 12px; padding: 16px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background .2s;
+  }
+  .drink-card:hover { background: rgba(255,201,51,.07); }
+
+  /* ===== WHY US ===== */
+  #why { background: var(--darker); }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 28px; }
+  .why-card {
+    text-align: center; padding: 36px 24px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,201,51,.1);
+    border-radius: 20px;
+    transition: transform .3s, border-color .3s;
+  }
+  .why-card:hover { transform: translateY(-6px); border-color: var(--yellow); }
+  .why-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+  .why-title { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1.1rem; color: var(--yellow); margin-bottom: 8px; }
+  .why-text { font-size: .88rem; color: rgba(255,248,238,.55); line-height: 1.5; }
+
+  /* ===== CONTACT ===== */
+  #contact {
+    background: var(--dark);
+  }
+  .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+  }
+  @media(max-width:700px){ .contact-grid { grid-template-columns: 1fr; } }
+
+  .contact-info { display: flex; flex-direction: column; gap: 22px; }
+  .contact-block {
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .contact-icon {
+    width: 48px; height: 48px; background: rgba(232,25,30,.2);
+    border: 1px solid rgba(232,25,30,.4); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+  .contact-detail .label {
+    font-size: .75rem; color: rgba(255,248,238,.4); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;
+  }
+  .contact-detail .value {
+    font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1rem; color: var(--cream);
+  }
+  .contact-detail .value a { color: var(--yellow); text-decoration: none; }
+  .contact-detail .value a:hover { text-decoration: underline; }
+
+  .map-placeholder {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,201,51,.15);
+    border-radius: 20px; overflow: hidden; height: 300px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px;
+    font-size: 3rem;
+  }
+  .map-placeholder p { font-size: .9rem; color: rgba(255,248,238,.4); font-family: 'Baloo 2', cursive; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--darker); text-align: center; padding: 32px 40px;
+    border-top: 1px solid rgba(255,201,51,.1);
+  }
+  footer .foot-logo { font-family: 'Boogaloo', cursive; font-size: 2rem; color: var(--yellow); }
+  footer .foot-logo span { color: var(--red); }
+  footer p { margin-top: 8px; font-size: .85rem; color: rgba(255,248,238,.35); }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:768px){
+    nav { padding: 12px 20px; }
+    .nav-links { display: none; }
+    section { padding: 70px 20px; }
+    .pizza-deco { display: none; }
+    .hero-title { font-size: clamp(3rem, 15vw, 5rem); }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Laziz <span>Pizza</span></a>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="tel:+919399979336" class="btn btn-primary" style="padding:10px 22px;font-size:.88rem;">Order Now 🍕</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="floaters" id="floaters"></div>
+  <div class="pizza-deco">🍕</div>
+  <div class="hero-inner">
+    <span class="hero-badge">🔥 Now Open in Maihar</span>
+    <h1 class="hero-title">Laziz<br><span class="accent">Pizza</span></h1>
+    <p class="hero-sub">Maihar's Tastiest Bite · Fresh · Hot · Loaded</p>
+    <div class="hero-ctas">
+      <a href="#menu" class="btn btn-primary">Explore Menu 🍕</a>
+      <a href="https://wa.me/919399979336?text=Hi%2C%20I%20want%20to%20order%20from%20Laziz%20Pizza!" target="_blank" class="btn btn-outline" style="border-color:#25d366;color:#25d366;">WhatsApp Order 💬</a>
+      <a href="#contact" class="btn btn-outline">Find Us 📍</a>
+    </div>
+  </div>
+</section>
+
+<!-- WAVY DIVIDER -->
+<div class="wavy-divider">
+  <svg viewBox="0 0 1440 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="background:var(--darker)">
+    <path d="M0 25 Q180 0 360 25 Q540 50 720 25 Q900 0 1080 25 Q1260 50 1440 25 L1440 50 L0 50Z" fill="#1a0a02"/>
+  </svg>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">Our Menu</p>
+      <h2 class="section-title">What's <span>Cooking?</span></h2>
+    </div>
+
+    <div class="tabs reveal">
+      <button class="tab-btn active" data-tab="veg-pizza">🍕 Veg Pizza</button>
+      <button class="tab-btn" data-tab="starters">🍟 Starters</button>
+      <button class="tab-btn" data-tab="burgers">🍔 Burgers</button>
+      <button class="tab-btn" data-tab="pasta-sandwich">🍝 Pasta & Sandwiches</button>
+      <button class="tab-btn" data-tab="drinks">🥤 Drinks & Desserts</button>
+      <button class="tab-btn" data-tab="combos">🎉 Combos</button>
+    </div>
+
+    <!-- VEG PIZZA -->
+    <div class="tab-panel active" id="tab-veg-pizza">
+      <p style="font-size:.82rem;color:rgba(255,248,238,.4);margin-bottom:24px;font-family:'Baloo 2',cursive;">Prices: S (Serves 1) / M (Serves 2) / L (Serves 3) / XL (Serves 4) · Regular Crust / Thin Crust</p>
+      <div class="pizza-grid">
+        <!-- standard pizzas -->
+        <div class="pizza-card"><div class="pizza-name">Four Season</div><div class="pizza-desc">Capsicum, Black Olives, loaded cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Laziz Desi</div><div class="pizza-desc">Tomato, onion, capsicum with cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Margarita</div><div class="pizza-desc">3 Types of loaded cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Peri Peri Margarita</div><div class="pizza-desc">3 Type cheese with peri peri spice</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Scezwan Pizza</div><div class="pizza-desc">Toppings in Schezwan sauce and loaded cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Veg Classic</div><div class="pizza-desc">Diced Tomato, sweet corn, black olives, cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Peri Peri Corn</div><div class="pizza-desc">Spicy treat with Paprika and sweet corn, cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Tandoori Paneer</div><div class="pizza-desc">Spicy tandoori paneer, onion, cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Tikka Paneer</div><div class="pizza-desc">Spicy tikka paneer with onion, capsicum, cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Veg Mexican</div><div class="pizza-desc">R/Y/G Capsicum, paprika, cheese, Mexican Dip</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Mexican Salsa</div><div class="pizza-desc">Pizza in salsa sauce toppings with loaded cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Veg Paprika</div><div class="pizza-desc">Tikka Paneer, sweet corn, paprika, Capsicum, cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Veg Carnival</div><div class="pizza-desc">Capsicum, Tomato, Corn, Jalapenos, Mushroom, Cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Veg Fajita Pizza</div><div class="pizza-desc">Diced Veges in thin crust with loaded cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Chefs Special</div><div class="pizza-desc">Tikka Paneer & Mushroom, Cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹175</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Chatpata Paneer</div><div class="pizza-desc">Tangy paneer with cheese & veges</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <div class="pizza-card"><div class="pizza-name">Peri Peri Paneer</div><div class="pizza-desc">Spicy Peri Peri Paprika and toppings, Cheese</div><div class="pizza-prices"><div class="price-tag"><span>S</span> ₹119</div><div class="price-tag"><span>M</span> ₹179</div><div class="price-tag"><span>L</span> ₹289</div><div class="price-tag"><span>XL</span> ₹399</div></div></div>
+        <!-- Cheese Burst -->
+        <div class="pizza-card" style="border-color:rgba(255,201,51,.4)">
+          <div class="pizza-name" style="color:var(--orange)">Any Veg Pizza – Cheese Burst 🧀</div>
+          <div class="pizza-desc">Upgrade any veg pizza to oozy cheese burst crust</div>
+          <div class="pizza-prices"><div class="price-tag"><span>S</span> ₹169</div><div class="price-tag"><span>M</span> ₹249</div><div class="price-tag"><span>L</span> ₹369</div><div class="price-tag"><span>XL</span> ₹479</div></div>
+        </div>
+        <!-- Must Try -->
+        <div class="pizza-card" style="border-color:var(--red)">
+          <span class="must-try-badge">⭐ Must Try Premium</span>
+          <div class="pizza-name" style="color:var(--orange)">Royal Kolhapuri Pizza</div>
+          <div class="pizza-desc">Laziz Gourmet Pizza</div>
+          <div class="pizza-prices"><div class="price-tag"><span>S</span> ₹169</div><div class="price-tag"><span>M</span> ₹249</div><div class="price-tag"><span>L</span> ₹369</div><div class="price-tag"><span>XL</span> ₹479</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STARTERS -->
+    <div class="tab-panel" id="tab-starters">
+      <div class="items-list">
+        <div class="item-row"><span class="item-name">French Fries</span><span class="item-price">₹79</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri French Fries</span><span class="item-price">₹89</span></div>
+        <div class="item-row"><span class="item-name">Cheesy French Fries</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Mexican Dip on Fries</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Paneer Pops</span><span class="item-price">₹129</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri Paneer Pops</span><span class="item-price">₹129</span></div>
+        <div class="item-row"><span class="item-name">Cheesy Garlic Sticks</span><span class="item-price">₹119</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri Garlic Sticks</span><span class="item-price">₹119</span></div>
+        <div class="item-row"><span class="item-name">Corn n Jalapenos Garlic Sticks</span><span class="item-price">₹119</span></div>
+        <div class="item-row"><span class="item-name">Cheese Burst Garlic Sticks</span><span class="item-price">₹129</span></div>
+      </div>
+    </div>
+
+    <!-- BURGERS -->
+    <div class="tab-panel" id="tab-burgers">
+      <p style="font-size:.82rem;color:rgba(255,248,238,.4);margin-bottom:20px;font-family:'Baloo 2',cursive;">Without Cheese / With Cheese</p>
+      <div class="items-list">
+        <div class="item-row"><span class="item-name">Fiery Paneer Burger</span><span class="item-price">₹89 / ₹109</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri Paneer Burger</span><span class="item-price">₹89 / ₹109</span></div>
+        <div class="item-row"><span class="item-name">Paneer Fusion Burger</span><span class="item-price">₹89 / ₹109</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri Veg Burger</span><span class="item-price">₹89 / ₹109</span></div>
+        <div class="item-row"><span class="item-name">Veg Fusion Burger</span><span class="item-price">₹89 / ₹109</span></div>
+        <div class="item-row"><span class="item-name">Spicy Masala Burger</span><span class="item-price">₹89 / ₹109</span></div>
+      </div>
+    </div>
+
+    <!-- PASTA & SANDWICHES -->
+    <div class="tab-panel" id="tab-pasta-sandwich">
+      <h3 style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:var(--yellow);margin-bottom:18px;">🍝 Veg Pasta</h3>
+      <div class="items-list" style="margin-bottom:36px;">
+        <div class="item-row"><span class="item-name">Red Pasta Arabiata</span><span class="item-price">₹119</span></div>
+        <div class="item-row"><span class="item-name">White Cheese Pasta Alfredo</span><span class="item-price">₹119</span></div>
+        <div class="item-row"><span class="item-name">Pink Cheese Pasta</span><span class="item-price">₹129</span></div>
+      </div>
+      <h3 style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:var(--yellow);margin-bottom:18px;">🥪 Grilled Toast Veg Sandwich</h3>
+      <div class="items-list">
+        <div class="item-row"><span class="item-name">Spicy Veg Cheese Grill</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Veg Pizza Grill</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Tikka Paneer Grill</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Peri Peri Paneer Grill</span><span class="item-price">₹99</span></div>
+        <div class="item-row"><span class="item-name">Margarita Cheese Grill</span><span class="item-price">₹99</span></div>
+      </div>
+    </div>
+
+    <!-- DRINKS & DESSERTS -->
+    <div class="tab-panel" id="tab-drinks">
+      <h3 style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:var(--yellow);margin-bottom:18px;">🍫 Desserts</h3>
+      <div class="drinks-grid" style="margin-bottom:32px;">
+        <div class="drink-card"><span class="item-name">Choco Lava Cake</span><span class="item-price">₹70</span></div>
+        <div class="drink-card"><span class="item-name">Coffee Lava Cake</span><span class="item-price">₹70</span></div>
+        <div class="drink-card"><span class="item-name">Whitelava Choco Cake</span><span class="item-price">₹70</span></div>
+        <div class="drink-card"><span class="item-name">Vanilla Ice Cream</span><span class="item-price">₹40</span></div>
+        <div class="drink-card"><span class="item-name">Chocolate Ice Cream</span><span class="item-price">₹50</span></div>
+        <div class="drink-card"><span class="item-name">Mix Ice Cream</span><span class="item-price">₹50</span></div>
+      </div>
+      <h3 style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:var(--yellow);margin-bottom:18px;">🥤 Milk Shakes</h3>
+      <div class="drinks-grid" style="margin-bottom:32px;">
+        <div class="drink-card"><span class="item-name">Oreo Shake</span><span class="item-price">₹80</span></div>
+        <div class="drink-card"><span class="item-name">Cold Coffee</span><span class="item-price">₹80</span></div>
+        <div class="drink-card"><span class="item-name">Pina Colada</span><span class="item-price">₹80</span></div>
+        <div class="drink-card"><span class="item-name">Cotton Candy</span><span class="item-price">₹80</span></div>
+        <div class="drink-card"><span class="item-name">Mango Shake</span><span class="item-price">₹80</span></div>
+        <div class="drink-card"><span class="item-name">Strawberry Shake</span><span class="item-price">₹80</span></div>
+      </div>
+      <h3 style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:var(--yellow);margin-bottom:18px;">☕ Hot Beverages</h3>
+      <div class="drinks-grid">
+        <div class="drink-card"><span class="item-name">Milk Tea</span><span class="item-price">₹20</span></div>
+        <div class="drink-card"><span class="item-name">Black Tea</span><span class="item-price">₹15</span></div>
+        <div class="drink-card"><span class="item-name">Milk Coffee</span><span class="item-price">₹25</span></div>
+        <div class="drink-card"><span class="item-name">Black Coffee</span><span class="item-price">₹20</span></div>
+      </div>
+    </div>
+
+    <!-- COMBOS -->
+    <div class="tab-panel" id="tab-combos">
+      <div class="combo-grid">
+        <div class="combo-card">
+          <div class="combo-type">🍕 Veg Combo</div>
+          <div class="combo-item"><span class="combo-desc">Pizza Small + Red Pasta + Fries + Coke (250ml)</span><span class="combo-price">₹280</span></div>
+          <div class="combo-item"><span class="combo-desc">Veg Burger + Red Pasta + Fries + Coke (250ml)</span><span class="combo-price">₹280</span></div>
+          <div class="combo-item"><span class="combo-desc">Margarita Pizza (Small) + Veg Burger + Fries + Coke (250ml)</span><span class="combo-price">₹280</span></div>
+          <div class="combo-item"><span class="combo-desc">Veg Burger + Garlic Sticks + Fries + Coke (250ml)</span><span class="combo-price">₹280</span></div>
+        </div>
+        <div class="combo-card">
+          <div class="combo-type">👫 Buddy Pack</div>
+          <div class="combo-item"><span class="combo-desc">2 Small Pizza + 1 Fries + 2 Coke (250ml)</span><span class="combo-price">₹300</span></div>
+          <div class="combo-item"><span class="combo-desc">2 Veg Burger + 1 Fries + 2 Chocolava Cake</span><span class="combo-price">₹350</span></div>
+          <div class="combo-item"><span class="combo-desc">1 Veg Pizza Medium + 2 Fries + 2 Coke (250ml)</span><span class="combo-price">₹350</span></div>
+          <div class="combo-item"><span class="combo-desc">4 Veg Burgers + 2 Fries + Coke (750ml)</span><span class="combo-price">₹350</span></div>
+        </div>
+        <div class="combo-card">
+          <div class="combo-type">🎉 Party Pack</div>
+          <div class="combo-item"><span class="combo-desc">4 Small Pizzas + 2 Chocolava Cake + 2 Coke (50ml)</span><span class="combo-price">₹600</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <p class="section-label">Why Choose Us</p>
+      <h2 class="section-title">Made with <span>Love</span> & Fire</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal"><span class="why-icon">🍕</span><div class="why-title">Fresh Dough Daily</div><div class="why-text">Every pizza starts with dough made fresh every single day — no shortcuts, ever.</div></div>
+      <div class="why-card reveal"><span class="why-icon">🧀</span><div class="why-title">Loaded with Cheese</div><div class="why-text">We don't skimp. Real mozzarella, cheese burst options, and premium toppings.</div></div>
+      <div class="why-card reveal"><span class="why-icon">🔥</span><div class="why-title">Blazing Hot Delivery</div><div class="why-text">Piping hot pizzas delivered fast to your doorstep in Maihar.</div></div>
+      <div class="why-card reveal"><span class="why-icon">💰</span><div class="why-title">Pocket Friendly</div><div class="why-text">Starting at just ₹119 for a full pizza — quality food at local prices.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">Find Us</p>
+      <h2 class="section-title">Visit <span>Laziz Pizza</span></h2>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <div class="contact-block">
+          <div class="contact-icon">📍</div>
+          <div class="contact-detail">
+            <div class="label">Address</div>
+            <div class="value">Laziz Pizza, Maihar,<br>Madhya Pradesh, India</div>
+          </div>
+        </div>
+        <div class="contact-block">
+          <div class="contact-icon">📞</div>
+          <div class="contact-detail">
+            <div class="label">Call to Order</div>
+            <div class="value"><a href="tel:+919399979336">+91 93999 79336</a></div>
+          </div>
+        </div>
+        <div class="contact-block">
+          <div class="contact-icon">🕐</div>
+          <div class="contact-detail">
+            <div class="label">Opening Hours</div>
+            <div class="value">Mon – Sun: 11:00 AM – 10:30 PM</div>
+          </div>
+        </div>
+        <div class="contact-block">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-detail">
+            <div class="label">Website</div>
+            <div class="value"><a href="https://www.lazizpizza.com" target="_blank">www.lazizpizza.com</a></div>
+          </div>
+        </div>
+        <div class="contact-block">
+          <div class="contact-icon">📱</div>
+          <div class="contact-detail">
+            <div class="label">Follow Us</div>
+            <div class="value">
+              <a href="https://instagram.com/lazizpizza" target="_blank" style="color:var(--yellow);">@lazizpizza</a> · 
+              <a href="https://wa.me/919399979336" target="_blank" style="color:#25d366;">WhatsApp</a> · Zomato · Swiggy
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="map-placeholder">
+        <span>🗺️</span>
+        <p>Laziz Pizza, Maihar, MP</p>
+        <a href="https://maps.google.com/?q=Laziz+Pizza+Maihar" target="_blank" class="btn btn-primary" style="margin-top:10px;font-size:.85rem;padding:10px 24px;">Open in Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">Laziz <span>Pizza</span></div>
+  <p>🍕 Maihar, Madhya Pradesh · www.lazizpizza.com</p>
+  <p style="margin-top:6px;">© 2026 Laziz Pizza. All rights reserved.</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a,button,.pizza-card,.why-card,.item-row,.drink-card,.combo-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Floating emojis
+  const emojis = ['🍕','🧀','🌶️','🍔','🍟','🥤','🫙','🔥'];
+  const floaters = document.getElementById('floaters');
+  for(let i = 0; i < 18; i++){
+    const el = document.createElement('div');
+    el.className = 'floater';
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.animationDuration = (12 + Math.random()*20) + 's';
+    el.style.animationDelay = (-Math.random()*30) + 's';
+    el.style.fontSize = (1.5 + Math.random()*2) + 'rem';
+    floaters.appendChild(el);
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => io.observe(r));
+
+  // Stagger pizza cards
+  document.querySelectorAll('.pizza-card, .item-row, .why-card, .combo-card, .drink-card').forEach((el, i) => {
+    el.style.transitionDelay = (i % 6) * 0.06 + 's';
+  });
+</script>
+</body>
+</html>
